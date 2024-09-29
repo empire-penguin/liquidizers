@@ -18,8 +18,8 @@ libc = "0.2.15"
 libm = "0.2.8"
 
 [build-dependencies]
-system-deps = "6"
-liquidizers-src = { version = "0.1.0" }
+system-deps = "7.0.3"
+liquidizers-src = { git = "https://github.com/empire-penguin/liquidizers-src" }
 
 [package.metadata.system-deps]
 liquid-dsp = "1.6.0"
