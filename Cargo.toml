@@ -1,0 +1,25 @@
+[package]
+name = "liquidizers"
+version = "0.10.0"
+authors = ["gsroberts@ucsd.edu"]
+license = "MIT"
+description = "High-level bindings to the liquid-dsp library"
+keywords = ["bindings", "dsp"]
+categories = ["api-bindings", "dsp"]
+repository = "https://github.com/empire-penguin/liquidizers"
+readme = "README.md"
+build = "build.rs"
+edition = "2018"
+
+[badges]
+maintenance = { status = "actively-maintained" }
+
+[features]
+default = ["liquid-dsp"]
+liquid-dsp = []
+
+[dependencies]
+libc = "0.2.15"
+libm = "0.2.1"
+
+[dev-dependencies]

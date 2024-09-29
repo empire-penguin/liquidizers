@@ -1,0 +1,25 @@
+[package]
+name = "liquidizers-sys"
+version = "0.1.0"
+authors = ["gsroberts@ucsd.edu"]
+license = "MIT"
+description = "Low-level bindings to the liquid-dsp library"
+keywords = ["bindings", "ffi"]
+categories = ["external-ffi-bindings"]
+repository = "https://github.com/empire-penguin/liquidizers"
+readme = "README.md"
+build = "build/main.rs"
+links = "liquid-dsp"
+
+[features]
+
+[dependencies]
+libc = "0.2.15"
+libm = "0.2.8"
+
+[build-dependencies]
+system-deps = "6"
+liquidizers-src = { version = "0.1.0" }
+
+[package.metadata.system-deps]
+liquid-dsp = "1.6.0"
