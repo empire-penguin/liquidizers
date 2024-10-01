@@ -2,19 +2,13 @@
 
 #![allow(trivial_numeric_casts)]
 
-use libc::{c_int, c_long, c_short};
-use liquidizers_sys::__BindgenComplex;
 use num_complex;
 
 use std::ffi;
 use std::fmt;
-use std::marker::PhantomData;
-use std::os::raw::c_void;
 
 use std::result;
-use std::string::FromUtf8Error;
-use std::sync::Arc;
-use std::{mem, ptr, str};
+use std::{mem, str};
 
 // `liquid`-specific Result type.
 pub type Result<T> = result::Result<T, Error>;
@@ -132,8 +126,6 @@ impl From<Error> for std::io::Error {
             Error::LiquidEio => ErrorKind::Other,
             Error::LiquidEnoconv => ErrorKind::Other,
             Error::LiquidEnoimp => ErrorKind::Other,
-
-            _ => ErrorKind::Other,
         };
 
         std::io::Error::new(kind, error)
