@@ -9,7 +9,7 @@ const VERSION: Option<&str> = option_env!("CARGO_PKG_VERSION");
 const OUTPUT_FILENAME: &str = "agc_crcf_example.m";
 
 fn main() -> Result<()> {
-    let mut main_prog = clap::Command::new("agc_crcf")
+    let main_prog = clap::Command::new("agc_crcf")
         .version(VERSION.unwrap_or("unknown"))
         .about("Automatic gain control example demonstrating its transient response.")
         .args([
