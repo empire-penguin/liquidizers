@@ -9,7 +9,7 @@ categories = ["external-ffi-bindings"]
 repository = "https://github.com/empire-penguin/liquidizers"
 readme = "README.md"
 build = "build/main.rs"
-links = "liquid-dsp"
+links = "liquid"
 
 [features]
 
@@ -22,4 +22,4 @@ system-deps = "7.0.3"
 liquidizers-src = { git = "https://github.com/empire-penguin/liquidizers-src" }
 
 [package.metadata.system-deps]
-liquid-dsp = "1.6.0"
+libliquid = "1.6.0"

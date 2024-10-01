@@ -1,14 +1,14 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+extern crate libc;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+#[cfg(unix)]
+mod unix;
+#[cfg(unix)]
+pub use crate::unix::*;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+#[cfg(windows)]
+mod windows;
+#[cfg(windows)]
+pub use windows::*;
+
+#[allow(dead_code)]
+mod ffi;
