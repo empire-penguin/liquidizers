@@ -35,7 +35,7 @@ pub enum Error {
 }
 
 impl Error {
-    pub fn to_raw(self) -> i32 {
+    pub fn to_raw(self) -> usize {
         match self {
             Error::LiquidOk => 0,
             Error::LiquidEint => 1,
@@ -53,7 +53,7 @@ impl Error {
         }
     }
 
-    pub fn from_raw(raw: i32) -> Error {
+    pub fn from_raw(raw: usize) -> Error {
         match raw {
             0 => Error::LiquidOk,
             1 => Error::LiquidEint,
@@ -69,7 +69,7 @@ impl Error {
             11 => Error::LiquidEnoconv,
             12 => Error::LiquidEnoimp,
             x => unsafe {
-                let s = liquidizers_sys::liquid_error_str[x as usize];
+                let s = liquidizers_sys::liquid_error_str[x];
                 panic!(
                     "Unknown error [{}]: {}",
                     x,
@@ -81,8 +81,7 @@ impl Error {
 
     pub fn message(self) -> &'static str {
         unsafe {
-            let i = self.to_raw();
-            let s = liquidizers_sys::liquid_error_str[i as usize];
+            let s = liquidizers_sys::liquid_error_str[self.to_raw()];
             let v: &'static [u8] = mem::transmute(ffi::CStr::from_ptr(s).to_bytes());
             str::from_utf8(v).unwrap()
         }
