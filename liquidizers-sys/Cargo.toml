@@ -19,7 +19,7 @@ libm = "0.2.8"
 
 [build-dependencies]
 system-deps = "7.0.3"
-liquidizers-src = { git = "https://github.com/empire-penguin/liquidizers-src" }
+liquidizers-src = { git = "https://github.com/empire-penguin/liquidizers-src", rev = "fc34123" }
 
 [package.metadata.system-deps]
 libliquid = "1.6.0"

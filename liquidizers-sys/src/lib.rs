@@ -12,3 +12,4 @@ pub use windows::*;
 
 #[allow(dead_code)]
 mod ffi;
+pub use ffi::*;

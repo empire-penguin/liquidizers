@@ -21,5 +21,11 @@ liquid-dsp = []
 [dependencies]
 libc = "0.2.15"
 libm = "0.2.1"
+liquidizers-sys = { version = "0.1.0", path = "liquidizers-sys" }
 
 [dev-dependencies]
+
+
+[[example]]
+name = "version"
+path = "examples/debug_ex/main.rs"
