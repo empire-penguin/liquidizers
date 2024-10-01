@@ -1,6 +1,6 @@
 [package]
 name = "liquidizers"
-version = "0.10.0"
+version = "0.1.0"
 authors = ["gsroberts@ucsd.edu"]
 license = "MIT"
 description = "High-level bindings to the liquid-dsp library"
@@ -22,10 +22,16 @@ liquid-dsp = []
 libc = "0.2.15"
 libm = "0.2.1"
 liquidizers-sys = { version = "0.1.0", path = "liquidizers-sys" }
+num-complex = "0.4.0"
+tracing = "0.1.40"
 
 [dev-dependencies]
-
+clap = "4.5.18"
 
 [[example]]
 name = "version"
-path = "examples/debug_ex/main.rs"
+path = "examples/version/main.rs"
+
+[[example]]
+name = "agc_crcf"
+path = "examples/agc_crcf/main.rs"

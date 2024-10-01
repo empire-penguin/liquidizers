@@ -60,20 +60,21 @@ impl Error {
     }
 
     pub fn from_raw(raw: i32) -> Error {
-        match raw {
-            0 => Error::LiquidOk,
-            1 => Error::LiquidEint,
-            2 => Error::LiquidEiobj,
-            3 => Error::LiquidEiconfig,
-            4 => Error::LiquidEival,
-            5 => Error::LiquidEirange,
-            6 => Error::LiquidEimode,
-            7 => Error::LiquidEumode,
-            8 => Error::LiquidEnoinit,
-            9 => Error::LiquidEimem,
-            10 => Error::LiquidEio,
-            11 => Error::LiquidEnoconv,
-            12 => Error::LiquidEnoimp,
+        assert!(raw >= 0, "Negative error code: {}", raw);
+        match raw as u32 {
+            liquidizers_sys::liquid_error_code_LIQUID_OK => Error::LiquidOk,
+            liquidizers_sys::liquid_error_code_LIQUID_EINT => Error::LiquidEint,
+            liquidizers_sys::liquid_error_code_LIQUID_EIOBJ => Error::LiquidEiobj,
+            liquidizers_sys::liquid_error_code_LIQUID_EICONFIG => Error::LiquidEiconfig,
+            liquidizers_sys::liquid_error_code_LIQUID_EIVAL => Error::LiquidEival,
+            liquidizers_sys::liquid_error_code_LIQUID_EIRANGE => Error::LiquidEirange,
+            liquidizers_sys::liquid_error_code_LIQUID_EIMODE => Error::LiquidEimode,
+            liquidizers_sys::liquid_error_code_LIQUID_EUMODE => Error::LiquidEumode,
+            liquidizers_sys::liquid_error_code_LIQUID_ENOINIT => Error::LiquidEnoinit,
+            liquidizers_sys::liquid_error_code_LIQUID_EIMEM => Error::LiquidEimem,
+            liquidizers_sys::liquid_error_code_LIQUID_EIO => Error::LiquidEio,
+            liquidizers_sys::liquid_error_code_LIQUID_ENOCONV => Error::LiquidEnoconv,
+            liquidizers_sys::liquid_error_code_LIQUID_ENOIMP => Error::LiquidEnoimp,
             x => unsafe {
                 let s = liquidizers_sys::liquid_error_str[x as usize];
                 panic!(
@@ -139,8 +140,7 @@ impl From<Error> for std::io::Error {
     }
 }
 
-mod agc;
-pub use agc::*;
+pub mod agc;
 
 pub fn version() -> String {
     unsafe {

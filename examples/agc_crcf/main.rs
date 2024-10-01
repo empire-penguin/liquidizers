@@ -1,6 +1,9 @@
 use std::io::Write;
 
-use liquidizers::{Complex, Result};
+use liquidizers::{
+    agc::{self, Agc},
+    Complex, Result,
+};
 
 const VERSION: Option<&str> = option_env!("CARGO_PKG_VERSION");
 const OUTPUT_FILENAME: &str = "agc_crcf_example.m";
@@ -13,29 +16,26 @@ fn main() -> Result<()> {
             clap::Arg::new("num_samples")
                 .long("num_samples")
                 .short('n')
-                .help("number of samples, n >= 100\t")
                 .default_value("2000"),
             clap::Arg::new("bandwidth")
                 .long("bandwidth")
                 .short('b')
-                .help("AGC bandwidth, b >= 0\t")
                 .default_value("0.01"),
         ]);
 
     let config = main_prog.clone().get_matches();
-    if config.get_flag("help") {
-        match main_prog.print_help() {
-            Ok(_) => {
-                return Ok(());
-            }
-            Err(e) => {
-                eprintln!("Error: {}", e);
-            }
-        }
-    }
 
-    let num_samples = config.get_one::<usize>("num_samples").unwrap().clone();
-    let bandwidth = config.get_one::<f32>("bandwidth").unwrap().clone();
+    let num_samples_str = config.get_one::<String>("num_samples").unwrap().clone();
+    let bandwidth_str = config.get_one::<String>("bandwidth").unwrap().clone();
+
+    let num_samples = num_samples_str
+        .parse::<usize>()
+        .expect("error parsing number of samples");
+
+    let bandwidth = bandwidth_str
+        .parse::<f32>()
+        .expect("error parsing bandwidth");
+
     let gamma = 0.001;
 
     // validate input
@@ -47,32 +47,28 @@ fn main() -> Result<()> {
         return Err(liquidizers::Error::LiquidEirange);
     }
 
-    let i: usize = 0;
+    let q = agc::AgcCrcf::new();
+    q.set_bandwidth(bandwidth).expect("error setting bandwidth");
+    // q.set_scale(0.5f32);
 
-    let q = liquidizers::agc_crcf_create();
-    liquidizers::agc_crcf_set_bandwidth(q, bandwidth);
-    // liquidizers::agc_crcf_set_scale(q, 0.5f32);
+    let mut x = vec![Complex::new(0.0, 0.0); num_samples];
+    let mut y = vec![Complex::new(0.0, 0.0); num_samples];
 
-    let x = vec![Complex::new(0.0, 0.0); num_samples];
-    let y = vec![Complex::new(0.0, 0.0); num_samples];
+    let mut rssi = vec![0.0; num_samples];
 
-    let rssi = vec![0.0; num_samples];
+    q.print().expect("error printing AGC object");
 
-    liquidizers::agc_crcf_print(q);
-
+    // generate input signal
     for i in 0..num_samples {
         x[i] = gamma * Complex::new(0.0, 2.0 * std::f32::consts::PI * 0.0193 * i as f32).exp();
     }
 
     for i in 0..num_samples {
-        let mut y_i = Complex::new(0.0, 0.0);
-        liquidizers::agc_crcf_execute(q, x[i], &mut y_i);
-        y[i] = y_i;
-
-        rssi[i] = liquidizers::agc_crcf_get_rssi(q);
+        y[i] = q.execute(x[i]);
+        rssi[i] = q.get_rssi();
     }
 
-    liquidizers::agc_crcf_destroy(q);
+    drop(q);
 
     let fid = std::fs::File::create(OUTPUT_FILENAME)
         .expect(format!("could not open file {} for writing", OUTPUT_FILENAME).as_str());
@@ -99,7 +95,7 @@ fn main() -> Result<()> {
             y[i].im
         )
         .unwrap();
-        write!(writer, "rssi({:4})  = {:12.4e};\n", i + 1, rssi[i])?;
+        write!(writer, "rssi({:4})  = {:12.4e};\n", i + 1, rssi[i]).unwrap();
     }
 
     write!(writer, "\n").unwrap();
@@ -108,14 +104,18 @@ fn main() -> Result<()> {
     write!(writer, "figure;\n").unwrap();
     write!(writer, "t = 0:(n-1);\n").unwrap();
     write!(writer, "subplot(3,1,1);\n").unwrap();
-    write!(writer, "  plot(t, real(x), '-', 'Color',[0 0.2 0.5],...\n").unwrap();
-    write!(writer, "       t, imag(x), '-', 'Color',[0 0.5 0.2]);\n").unwrap();
+    write!(writer, "  plot(t, real(x), '-', 'Color',[0 0.2 0.5])\n").unwrap();
+    write!(writer, "  hold on;\n").unwrap();
+    write!(writer, "  plot(t, imag(x), '-', 'Color',[0 0.5 0.2]);\n").unwrap();
+    write!(writer, "  hold off;\n").unwrap();
     write!(writer, "  grid on;\n").unwrap();
     write!(writer, "  xlabel('sample index');\n").unwrap();
     write!(writer, "  ylabel('input');\n").unwrap();
     write!(writer, "subplot(3,1,2);\n").unwrap();
-    write!(writer, "  plot(t, real(y), '-', 'Color',[0 0.2 0.5],...\n").unwrap();
-    write!(writer, "       t, imag(y), '-', 'Color',[0 0.5 0.2]);\n").unwrap();
+    write!(writer, "  plot(t, real(y), '-', 'Color',[0 0.2 0.5]);\n").unwrap();
+    write!(writer, "  hold on;\n").unwrap();
+    write!(writer, "  plot(t, imag(y), '-', 'Color',[0 0.5 0.2]);\n").unwrap();
+    write!(writer, "  hold off;\n").unwrap();
     write!(writer, "  grid on;\n").unwrap();
     write!(writer, "  xlabel('sample index');\n").unwrap();
     write!(writer, "  ylabel('output');\n").unwrap();
