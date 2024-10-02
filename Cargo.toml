@@ -33,5 +33,5 @@ name = "version"
 path = "examples/version/main.rs"
 
 [[example]]
-name = "agc_crcf"
-path = "examples/agc_crcf/main.rs"
+name = "agc"
+path = "examples/agc/main.rs"

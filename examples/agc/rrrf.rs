@@ -1,41 +1,12 @@
-use std::io::Write;
-
 use liquidizers::{
     agc::{self, Agc},
     Complex, Result,
 };
+use std::io::Write;
 
-const VERSION: Option<&str> = option_env!("CARGO_PKG_VERSION");
-const OUTPUT_FILENAME: &str = "agc_crcf_example.m";
+const OUTPUT_FILENAME: &str = "agc_rrrf_example.m";
 
-fn main() -> Result<()> {
-    let main_prog = clap::Command::new("agc_crcf")
-        .version(VERSION.unwrap_or("unknown"))
-        .about("Automatic gain control example demonstrating its transient response.")
-        .args([
-            clap::Arg::new("num_samples")
-                .long("num_samples")
-                .short('n')
-                .default_value("2000"),
-            clap::Arg::new("bandwidth")
-                .long("bandwidth")
-                .short('b')
-                .default_value("0.01"),
-        ]);
-
-    let config = main_prog.clone().get_matches();
-
-    let num_samples_str = config.get_one::<String>("num_samples").unwrap().clone();
-    let bandwidth_str = config.get_one::<String>("bandwidth").unwrap().clone();
-
-    let num_samples = num_samples_str
-        .parse::<usize>()
-        .expect("error parsing number of samples");
-
-    let bandwidth = bandwidth_str
-        .parse::<f32>()
-        .expect("error parsing bandwidth");
-
+pub fn rrrf_main(num_samples: usize, bandwidth: f32) -> Result<()> {
     let gamma = 0.001;
 
     // validate input

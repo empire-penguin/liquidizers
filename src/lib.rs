@@ -133,6 +133,7 @@ impl From<Error> for std::io::Error {
 }
 
 pub mod agc;
+pub mod modem;
 
 pub fn version() -> String {
     unsafe {
